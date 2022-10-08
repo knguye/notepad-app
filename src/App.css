@@ -23,7 +23,20 @@ textarea {
   min-height: 50vh;
 }
 
+.AddButton{
+  height: 5vh;
+  width: 5vh;
+  font-size: 3vh;
+  border: 2px solid white;
+  color: white;
+  background: none;
+}
 
+.AddPrompt{
+  height: 80%;
+  width: 80%;
+  background-color: red;
+}
 
 .App {
   min-height: 100vh;
