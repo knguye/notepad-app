@@ -1,4 +1,45 @@
-textarea {
+
+.BodyEntry {
+  color: #000;
+  border: solid 1px black;
+}
+
+.Board {
+  border: 2px black;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.Note {
+  border-radius: .25em;
+  margin: 0 .25em .5em;
+  color: #fff;
+  min-height: 50vh;
+}
+
+.NoteTitle {
+  display: inline;
+  margin: 2vh -2vh 1vh 2vh;
+}
+
+.DeleteButton{
+  float: right;
+  margin: 1vh 2vh 2vh 0;
+  height: 4vh;
+  min-width: 4vh; 
+  width: auto;
+  font-size: 2vh;
+  border: 2px solid white;
+  color: white;
+  background: none;
+}
+
+.Note-white > .DeleteButton{
+  border: 2px solid black;
+  color: black;
+}
+
+.NoteTextarea {
   background: transparent;
   color: #fff;
   font-size: 3.5vh;
@@ -11,16 +52,12 @@ textarea {
   padding: 0 2vh 0;
 }
 
-.Board {
-  border: 2px black;
-  display: flex;
+.Note-white {
+  color: #000;
 }
 
-.Note {
-  border-radius: .25em;
-  margin: 0 .25em 0;
-  color: #fff;
-  min-height: 50vh;
+.NoteTextarea-white{
+  color: #000;
 }
 
 .AddButton{

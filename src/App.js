@@ -3,8 +3,19 @@ import './App.css';
 import React from 'react';
 
 class App extends React.Component {
+  activeNotes = []; 
+
   constructor(){
     super();
+
+    this.activeNotes = window.localStorage.getItem('activeNotes');
+    console.log(JSON.stringify(this.activeNotes));
+
+
+    if (this.activeNotes === null){
+      this.activeNotes = [];
+    }
+
     this.state = {
       showAddPrompt: false,
       nextNote: {
@@ -32,17 +43,26 @@ class App extends React.Component {
 
   addNewNote(noteProperties){
     this.setState({
-      nextNote: {
-        color: noteProperties.color,
-        title: noteProperties.title,
-      }
+      showAddPrompt: false
     });
     
-    console.log('HI');
-    // TODO: Append Child as <Note/>
+    const nextNote = {
+      title: noteProperties.title,
+      color: noteProperties.color,
+      body: noteProperties.body
+    }
+
+    this.activeNotes.push(nextNote);
+
+    window.localStorage.setItem('activeNotes', this.activeNotes);
   }
 
   render () {
+    const notes = this.activeNotes.map((val, i) => (
+      <Note key={i} title={val.title} color={val.color} body={val.body}></Note>
+    ));
+    
+
     return (
     <div className="App">
       <div className="App-header">
@@ -50,8 +70,7 @@ class App extends React.Component {
         <Button content="+" className="AddButton" onClick={this.enableAddPrompt}/>
       </div>
       <Board>
-        <Note color="red" title="Note 1"/>
-        <Note color="blue" title="Note 2"/>
+        {notes}
       </Board>
 
       {this.state.showAddPrompt ? 
@@ -84,22 +103,39 @@ class Note extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      height: "50vh"
+      height: "50vh",
+      render: true
     }
+
+    this.deleteNote = this.deleteNote.bind(this);
   }
 
   // Unused, TODO: Use to change height based on textarea line breaks
   resizeNote(setHeight){
     this.setState = {
-      height: setHeight
+      height: setHeight,
+      render: true
     }
   }
 
+  deleteNote(){
+    this.setState({ render: false }, () =>
+      {
+        console.log("Deleting note with title " + this.props.title);
+      }
+    );
+
+
+  }
+
   render() {
+    const { render } = this.state;
+    if (render === false) return null;
+  
     return (
     <div className={"Note Note-" + this.props.color} style={{ backgroundColor: this.props.color, height: this.state.height }} >
-      <h2>{this.props.title}</h2>
-      <textarea></textarea>
+      <h2 className="NoteTitle">{this.props.title}</h2> <Button content="-" className="DeleteButton" onClick={this.deleteNote}/>
+      <br/><textarea className={"NoteTextarea NoteTextarea-" + this.props.color}>{this.props.body}</textarea>
     </div>
     );
   }
@@ -114,7 +150,7 @@ class AddPrompt extends React.Component{
     return (
       <div className="AddPrompt">
         <div className="AddPromptMenu">
-          <AddForm onSubmit={this.props.addAction}/>
+          <AddForm addAction={this.props.addAction}/>
           <Button onClick={this.props.cancelAction} content={"Cancel"}/>
           </div>
       </div>
@@ -128,49 +164,52 @@ class AddForm extends React.Component{
     this.state = {
       color: "white",
       title: "Untitled",
+      body: "",
       label: null
     }
 
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleColorChange = this.handleColorChange.bind(this);
-    this.addNote = this.addNote.bind(this);
+    this.handleBodyChange = this.handleBodyChange.bind(this);
   }
 
   handleTitleChange(event){
-    this.setState({
-      title: event.target.value,
+    this.setState({ title: event.target.value }, () => {
+      console.log(this.state.title);
     })
-
-    console.log(this.state);
   }
 
   handleColorChange(event){
-    this.setState({
-      color: event.target.value,
+    this.setState({ color: event.target.value }, () => {
+      console.log(this.state.color);
     })
-
-    console.log(this.state);
   }
 
-  addNote(event){
-    alert("form submitted");
-    (event) => this.props.addAction(event, this.state)
-    //event.preventDefault();
+  handleBodyChange(event){
+    this.setState({ body: event.target.value }, () => {
+      console.log(this.state.body);
+    })
   }
 
   render(){
     return (
-      <form onSubmit={this.addNote}>
+      <div>
+      <h2>Create a Note: </h2>
+      <form id="addform" onSubmit={() => this.props.addAction(this.state)}>
         <label>Title: </label><input type="text" onChange={this.handleTitleChange}></input>
-        <br/>
-        <label for="color">Color: </label><select name="color" onChange={this.handleColorChange}>
+        <br/><br/>
+        <label for="color">Color: </label><select name="color" value={this.state.value} onChange={this.handleColorChange}>
           <option value="white">White</option>
           <option value="red">Red</option>
           <option value="blue">Blue</option>
         </select>
-        <br/>
+        <br/><br/>
+        <textarea className="BodyEntry" form="addform" onChange={this.handleBodyChange}></textarea>
+
+        <br/><br/>
         <input className="ButtonUI" type="submit" value="Add Note"/>
       </form>
+      </div>
     )
   }
 }
