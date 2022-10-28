@@ -144,7 +144,6 @@ class Note extends React.Component{
         activeNotes = transformedArray;
 
         localStorage.setItem('activeNotes', JSON.stringify(activeNotes));
-        // TODO: update active notes available
       }
     );
   }
